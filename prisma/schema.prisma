@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Booking details
+  bookingDate    DateTime
+  timeSlotStart  String // Format: "09:00"
+  timeSlotEnd    String // Format: "11:00"
+
+  // Customer information
+  customerName  String
+  customerEmail String
+  customerPhone String
+
+  // Tickets
+  childrenCount Int @default(0)
+  toddlersCount Int @default(0)
+  adultsCount   Int @default(0)
+
+  // Payment
+  totalAmount   Int // in øre (1 kr = 100 øre)
+  paymentStatus String @default("pending") // pending, succeeded, failed, refunded
+  paymentId     String? // Stripe/Vipps payment intent ID
+
+  // Access control
+  accessCode   String? // PIN code from Salto KS
+  saltoUserId  String? // Salto KS user ID
+  saltoCredId  String? // Salto KS credential ID
+
+  // Status
+  status String @default("confirmed") // confirmed, cancelled, completed, no_show
+
+  // Special requests or notes
+  notes String?
+
+  @@index([bookingDate, timeSlotStart])
+  @@index([customerEmail])
+  @@index([customerPhone])
+}
+
+model TimeSlot {
+  id          Int     @id @default(autoincrement())
+  startTime   String // Format: "09:00"
+  endTime     String // Format: "11:00"
+  maxCapacity Int     @default(15)
+  isActive    Boolean @default(true)
+
+  @@unique([startTime, endTime])
+}
+
+model BlockedDate {
+  id          Int      @id @default(autoincrement())
+  blockedDate DateTime @unique
+  reason      String?
+  createdAt   DateTime @default(now())
+}
+
+model Settings {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}

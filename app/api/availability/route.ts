@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { format, parse } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/availability?date=2025-01-15
 export async function GET(request: NextRequest) {
   try {

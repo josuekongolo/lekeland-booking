@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { createStripeCheckoutSession } from "@/lib/stripe";
 import { format, parse } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 const CHILD_PRICE = 14900; // 149 kr in øre (cents)
 
 export async function POST(request: NextRequest) {
